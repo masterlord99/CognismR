@@ -1,0 +1,192 @@
+---
+title: "CognismR"
+author: "Jelenčič Jakob"
+date: "2019 M12 4"
+output:
+  md_document:
+    variant: gfm
+---
+
+
+1. [Installation](#install)
+2. [App](#app)
+3. [Basic functions](#basic)
+4. [Python](#py)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = "")
+library(CognismR)
+```
+
+## <a name="install"></a> <span style="color:brown">1. Installation:</span>
+
+Package designed for unsupervised analysis of job titles.
+
+You can see the app on shinyapps.io as well: [https://fmfjelencicj14.shinyapps.io/JobTitlesAI/](https://fmfjelencicj14.shinyapps.io/JobTitlesAI/)
+
+```{r,eval=F}
+
+devtools::install_github("masterlord99/CognismR",dependencies = T)
+library(CognismR)
+```
+
+
+
+## <a name="app"></a> <span style="color:brown">2. App:</span>
+
+App conatins more detailed description of workflow, some fancier visualizations and animations. We plot embeddings with TSNE projection.
+
+One can run the app via command:
+
+```{r,eval=F}
+run_APP()
+```
+
+One can observe comparisson of companies evolving through time:
+
+```{r,echo=F}
+knitr::include_graphics("inst/pics/Capture.PNG")
+```
+
+One can observe animation of company evolution through time:
+
+![Animation example available in app.](inst/anim/Wells Fargo & Company.gif)
+
+One can observe classification process and play with the options/plotting.
+
+```{r,echo=F}
+knitr::include_graphics("inst/pics/tokenizer.PNG")
+```
+
+By default TSNE plot is set to FALSE. You can turn it on in options (green link). Example TSNE projection, first plot is the position of query in the carrriers space, second one is the position of the query in the tokens space. TSNE examples:
+
+
+```{r,echo=F}
+
+knitr::include_graphics("inst/pics/space.PNG")
+```
+
+One can also observe hot tokenizer works.
+
+```{r,echo=F}
+knitr::include_graphics("inst/pics/tokenizer_1.PNG")
+```
+
+Finally one can examine the dictionary and also detailed workflow.
+
+```{r,echo=F}
+knitr::include_graphics("inst/pics/snip.PNG")
+```
+
+## <a name="basic"></a> <span style="color:brown">3. Basic functions:</span>
+
+Few example how to use pretrained embedding, how to extract similarities and how to observe vectorized space.
+
+### Get Embedding Matrix:
+
+Rownames are stemmed tokens, columns present embedded dimensions.
+
+```{r}
+
+em_mat <- get_embedding_matrix()
+em_mat[1:5,1:3]
+dim(em_mat)
+```
+
+### Get Vectorized Space:
+
+Carriers of our space are 50 vectors that represent specific fields of job titles. Carriers are constructed as most important beta probabilities of LDA clustering, then vectorized with LSTM emebddings. Detailed procedure explained in app.
+
+```{r}
+space <- get_vectorized_space()
+space[1:5,1:3]
+dim(space)
+```
+
+
+### Get Similarities between Carriers:
+
+```{r}
+space_sim <- get_space_distances()
+space_sim[1:5,1:3]
+dim(space)
+```
+
+Visualize Similarities as dendogram (More visualizations embedded in the app). Dendogram works with tokens embedding aswell:
+
+```{r}
+dend(get_vectorized_space())
+```
+
+
+### Assign Tokens to Job Titles:
+
+Function is vectorized, if tokenizer cannot find appropriate token it assign NA. Always returns data frame of queries and assigned tokens. It can handle miss-spellings and multilingual input.
+
+```{r}
+query <- c("diretor of finance","i.t manager", "manger","null example","lerherin", 
+           "asesor en computación asuntos informáticos y tecnologicos", "qa and qc inspector")
+assignRoleTokens(query)
+```
+
+
+### Get embeddings of job titles:
+
+Function is vectorized, it returns a matrix. Matrix has NA values if no tokens were asigned. It throws warning when tokenization is not complete.
+
+```{r}
+query <- c("diretor of finance","i.t manager", "manger","null example","lerherin", 
+           "asesor en computación asuntos informáticos y tecnologicos", "qa and qc inspector")
+mat <- get_embedded_titles(query)
+mat[,1:3]## display only first 3 dimensions
+```
+
+### Get most similiar tokens:
+
+Function takes in query and returns list of best fitting matches and query embedding. Where token cannot be assigned it returns null.
+
+
+```{r}
+query <- c("basketball coach","i.t manager","null")
+get_tokens_matching(query)
+
+```
+
+
+
+
+### Get distance to the closest space carriers:
+
+Function takes in query and returns list of best fitting matches and query embedding. Where token cannot be assigned it returns null.
+
+
+```{r}
+query <- c("basketball coach","i.t manager","investing banker")
+get_space_matching(query)
+
+```
+
+
+
+### Compare 2 Job Titles:
+
+Function takes 2 job titles and return cosine similarity distance. Below example also serves as prove of concept. It returns a list, where first 2 elements are vectors of nearest matches and third one is comparisson distance.
+
+
+```{r}
+## we expect low similarity
+compareTitles("basketball coach","highschool teacher")
+## we expect high similarity
+compareTitles("basketball teacher","high school coach")
+
+```
+
+
+## <a name="py"></a> <span style="color:brown">4. Python:</span>
+
+One can call R from Python via rpy2 package. Make sure you have CognismR package installed.
+
+[Documentation]()https://rpy2.readthedocs.io/en/version_2.8.x/
+
+
+## Jakob
