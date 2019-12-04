@@ -1,0 +1,32 @@
+Package: CognismR
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Author: Jakob
+Maintainer: Jakob <jakob.jelencic@ijs.si>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: research
+Encoding: UTF-8
+LazyData: true
+Depends:
+    data.table,
+    shiny,
+    shinyjs,
+    DT,
+    shinycssloaders,
+    shinythemes,
+    gridExtra,
+    plyr,
+    dplyr,
+    text2vec,
+    Rtsne,
+    ggplot2,
+    plotly,
+    fields,
+    ggrepel,
+    ggplot2,
+    ggdendro,
+    tidyr,
+    stringr,
+    stringi
