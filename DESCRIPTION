@@ -29,4 +29,5 @@ Depends:
     ggdendro,
     tidyr,
     stringr,
-    stringi
+    stringi,
+    stringdist
